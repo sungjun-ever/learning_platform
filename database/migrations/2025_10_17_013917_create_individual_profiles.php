@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('individual_profiles', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('user_id')->unique();
-            $table->string('name');
-            $table->string('birth')->nullable();
+            $table->string('job')->nullable();
+            $table->smallInteger('career')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

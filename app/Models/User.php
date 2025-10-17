@@ -22,6 +22,9 @@ class User extends Authenticatable
     protected $fillable = [
         'email',
         'password',
+        'name',
+        'birth',
+        'phone',
     ];
 
     /**
@@ -69,6 +72,6 @@ class User extends Authenticatable
 
     public function profile(): HasOne
     {
-        return $this->user_type === 'individual' ? $this->individualProfile() : $this->companyProfile();
+        return $this->user_type === 'individual' ? $this->individualProfile : $this->companyProfile;
     }
 }

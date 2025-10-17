@@ -12,8 +12,8 @@ class IndividualProfile extends Model
 
     protected $fillable = [
         'user_id',
-        'name',
-        'birth',
+        'job',
+        'career'
     ];
 
     public function user(): BelongsTo

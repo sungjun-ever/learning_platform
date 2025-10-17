@@ -181,7 +181,7 @@ readonly class UserService
      * 사용자 정보 수정
      * @param string $uuid
      * @param array $data
-     * @return void
+     * @return string
      * @throws \Throwable
      */
     public function updateUser(string $uuid, array $data): string

@@ -3,17 +3,35 @@
 namespace App\Repositories\IndividualProfile;
 
 use App\Models\IndividualProfile;
+use App\Repositories\BaseRepository;
+use Illuminate\Database\Eloquent\Builder;
 
-readonly class IndividualProfileRepository implements IIndividualProfileRepository
+class IndividualProfileRepository extends BaseRepository implements IIndividualProfileRepository
 {
     public function __construct(
-        private IndividualProfile $model,
+        private readonly IndividualProfile $model,
     )
     {
     }
 
+    protected function readConnection(): Builder
+    {
+        return $this->model->on('sqlite');
+    }
+
+    protected function writeConnection(): Builder
+    {
+        return $this->model->on('sqlite');
+    }
+
+
     public function create(array $data): ?IndividualProfile
     {
-        return $this->model->create($data);
+        return $this->writeConnection()->create($data);
+    }
+
+    public function update(int $userId, array $data): bool
+    {
+        return $this->writeConnection()->where('user_id', $userId)->update($data);
     }
 }

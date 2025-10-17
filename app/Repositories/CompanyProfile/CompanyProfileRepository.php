@@ -3,17 +3,34 @@
 namespace App\Repositories\CompanyProfile;
 
 use App\Models\CompanyProfile;
+use App\Repositories\BaseRepository;
+use Illuminate\Database\Eloquent\Builder;
 
-readonly class CompanyProfileRepository implements ICompanyProfileRepository
+class CompanyProfileRepository extends BaseRepository implements ICompanyProfileRepository
 {
     public function __construct(
-        private CompanyProfile $model,
+        private readonly CompanyProfile $model,
     )
     {
     }
 
+    protected function readConnection(): Builder
+    {
+        return $this->model->on('sqlite');
+    }
+
+    protected function writeConnection(): Builder
+    {
+        return $this->model->on('sqlite');
+    }
+
     public function create(array $data): ?CompanyProfile
     {
-        return $this->model->create($data);
+        return $this->writeConnection()->create($data);
+    }
+
+    public function update(int $userId, array $data): bool
+    {
+        return $this->writeConnection()->where('user_id', $userId)->update($data);
     }
 }

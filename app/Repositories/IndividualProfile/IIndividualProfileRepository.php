@@ -7,4 +7,5 @@ use App\Models\IndividualProfile;
 interface IIndividualProfileRepository
 {
     public function create(array $data): ?IndividualProfile;
+    public function update(int $userId, array $data): bool;
 }

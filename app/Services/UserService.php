@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Dto\CompanyProfile\CreateCompanyProfileData;
+use App\Dto\CompanyProfile\UpdateCompanyProfile;
 use App\Dto\IndividualProfile\CreateIndividualProfileData;
+use App\Dto\IndividualProfile\UpdateIndividualProfileData;
 use App\Dto\User\CreateUserData;
 use App\Dto\User\UpdateUserData;
 use App\Enum\UserType;
@@ -143,7 +145,46 @@ readonly class UserService
         return $userUuid;
     }
 
-    public function updateUser(string $uuid, array $data)
+    private function updateIndividualProfile(User $user, array $data): void
+    {
+        $updateIndividualProfileDto = new UpdateIndividualProfileData(
+            job: $data['job'] ?? null,
+            career: $data['career'] ?? null,
+        );
+
+        $update = $this->individualProfileRepository->update($user->id, $updateIndividualProfileDto->toArray());
+
+        if (!$update) {
+            throw new UpdateUserException("사용자 개인 프로필 업데이트 실패 user id: " , $user->id);
+        }
+    }
+
+    private function updateCompanyProfile(User $user, array $data): void
+    {
+        $updateCompanyProfileDto = new UpdateCompanyProfile(
+            companyId: $data['companyId'],
+            position: $data['position'] ?? null,
+            department: $data['department'] ?? null,
+            employeeNumber: $data['employeeNumber'] ?? null,
+            joinedAt: $data['joinedAt'] ?? null,
+            leftAt: $data['leftAt'] ?? null,
+        );
+
+        $update = $this->companyProfileRepository->update($user->id, $updateCompanyProfileDto->toArray());
+
+        if (!$update) {
+            throw new UpdateUserException("사용자 회사 프로필 업데이트 실패 user id: " . $user->id);
+        }
+    }
+
+    /**
+     * 사용자 정보 수정
+     * @param string $uuid
+     * @param array $data
+     * @return void
+     * @throws \Throwable
+     */
+    public function updateUser(string $uuid, array $data): string
     {
         DB::transaction(function () use ($uuid, $data) {
             $updateUserData = new UpdateUserData(
@@ -152,12 +193,28 @@ readonly class UserService
                 birth: $data['birth'] ?? null,
             );
 
-            $updateUser = $this->userRepository->findByUuid($uuid)->update($updateUserData->toArray());
+            $user = $this->userRepository->findByUuid($uuid);
+
+            if (!$user) {
+                throw new ModelNotFoundException("사용자 가져오기 실패 uuid: $uuid");
+            }
+
+            $updateUser = $user->update($updateUserData->toArray());
 
             if (!$updateUser) {
                 throw new UpdateUserException("사용자 수정 실패 uuid: $uuid");
             }
+
+            if ($data['userType'] === UserType::INDIVIDUAL->value) {
+                $this->updateIndividualProfile($user, $data);
+            }
+
+            if ($data['userType'] === UserType::COMPANY->value) {
+                $this->updateCompanyProfile($user, $data);
+            }
         });
+
+        return $uuid;
     }
 
 }

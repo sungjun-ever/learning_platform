@@ -36,6 +36,7 @@ class UserController extends Controller
      * 사용자 생성
      * @param StoreUserRequest $request
      * @return JsonResponse
+     * @throws \Throwable
      */
     public function store(StoreUserRequest $request): JsonResponse
     {
@@ -49,17 +50,22 @@ class UserController extends Controller
         ]);
     }
 
+    /**
+     * 사용자 정보 수정
+     * @param UpdateUserRequest $request
+     * @return JsonResponse
+     * @throws \Throwable
+     */
     public function update(UpdateUserRequest $request): JsonResponse
     {
         $data = $request->validationData();
 
-        $this->userService->updateUser($data['uuid'], $data);
+        $uuid = $this->userService->updateUser($data['uuid'], $data);
 
-        // @TODO user uuid 리턴
         return response()->json([
             'status' => 'success',
             'data' => [
-                'uid' => 'user uuid'
+                'uid' => $uuid
             ],
         ]);
     }

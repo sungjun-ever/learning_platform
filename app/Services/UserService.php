@@ -145,6 +145,13 @@ readonly class UserService
         return $userUuid;
     }
 
+    /**
+     * 개인 회원 프로필 업데이트
+     * @param User $user
+     * @param array $data
+     * @return void
+     * @throws UpdateUserException
+     */
     private function updateIndividualProfile(User $user, array $data): void
     {
         $updateIndividualProfileDto = new UpdateIndividualProfileData(
@@ -155,10 +162,17 @@ readonly class UserService
         $update = $this->individualProfileRepository->update($user->id, $updateIndividualProfileDto->toArray());
 
         if (!$update) {
-            throw new UpdateUserException("사용자 개인 프로필 업데이트 실패 user id: " , $user->id);
+            throw new UpdateUserException("개인 회원 프로필 업데이트 실패 user id: " , $user->id);
         }
     }
 
+    /**
+     * 기업 회원 프로필 업데이트
+     * @param User $user
+     * @param array $data
+     * @return void
+     * @throws UpdateUserException
+     */
     private function updateCompanyProfile(User $user, array $data): void
     {
         $updateCompanyProfileDto = new UpdateCompanyProfile(
@@ -173,7 +187,7 @@ readonly class UserService
         $update = $this->companyProfileRepository->update($user->id, $updateCompanyProfileDto->toArray());
 
         if (!$update) {
-            throw new UpdateUserException("사용자 회사 프로필 업데이트 실패 user id: " . $user->id);
+            throw new UpdateUserException("기업 회원 프로필 업데이트 실패 user id: " . $user->id);
         }
     }
 

@@ -17,17 +17,10 @@ readonly class UserService
 {
     public function __construct(
         private IUserRepository $userRepository,
+        private UserProfileStrategyFactory $profileStrategyFactory,
+        private ProfileDataFactory $profileDataFactory,
     )
     {
-    }
-
-    private function getProfileStrategy(string $userType): IUserProfileStrategy|null
-    {
-        return match ($userType) {
-            UserType::INDIVIDUAL->value => new IndividualProfileStrategy(),
-            UserType::COMPANY->value => new CompanyProfileStrategy(),
-            default => null,
-        };
     }
 
     /**
@@ -84,9 +77,12 @@ readonly class UserService
                 throw new CreateUserException('사용자 생성에 실패했습니다.');
             }
 
-            $profileStrategy = $this->getProfileStrategy($user->user_type);
+            $profileStrategy = $this->profileStrategyFactory->make($user->user_type);
+            $profileData = $this->profileDataFactory->makeCreateData($user->user_type, $user->id, $data);
 
-            $profileStrategy?->createProfile($user, $data);
+            if ($profileStrategy && $profileData) {
+                $profileStrategy->createProfile($user, $profileData);
+            }
 
             $userUuid = $user->uuid;
         });
@@ -122,8 +118,13 @@ readonly class UserService
                 throw new UpdateUserException("사용자 수정 실패 uuid: $uuid");
             }
 
-            $profile = $this->getProfileStrategy($data['userType']);
-            $profile?->updateProfile($user, $data);
+            $profileStrategy = $this->profileStrategyFactory->make($user->user_type);
+            $profileData = $this->profileDataFactory->makeUpdateData($user->user_type, $data);
+
+            if ($profileStrategy && $profileData) {
+                $profileStrategy->updateProfile($user, $profileData);
+            }
+
         });
 
         return $uuid;

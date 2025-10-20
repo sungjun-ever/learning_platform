@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Dto\CompanyProfile;
+namespace App\Dto\UserProfile;
 
-readonly class UpdateCompanyProfile
+readonly class CreateCompanyProfileData implements IProfileData
 {
 
     public function __construct(
+        public int     $userId,
         public int     $companyId,
         public ?string $position = null,
         public ?string $department = null,
@@ -19,6 +20,7 @@ readonly class UpdateCompanyProfile
     public function toArray(): array
     {
         return [
+            'user_id' => $this->userId,
             'company_id' => $this->companyId,
             'position' => $this->position,
             'department' => $this->department,

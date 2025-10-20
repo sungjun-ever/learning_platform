@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Dto\IndividualProfile;
+namespace App\Dto\UserProfile;
 
-readonly class CreateIndividualProfileData
+readonly class UpdateIndividualProfileData implements IProfileData
 {
 
     public function __construct(
-        public int     $userId,
         public ?string $job = null,
         public ?int    $career = null,
     )
@@ -16,7 +15,6 @@ readonly class CreateIndividualProfileData
     public function toArray(): array
     {
         return [
-            'user_id' => $this->userId,
             'job' => $this->job,
             'career' => $this->career,
         ];

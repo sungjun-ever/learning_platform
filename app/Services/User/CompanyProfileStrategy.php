@@ -2,43 +2,32 @@
 
 namespace App\Services\User;
 
-use App\Dto\CompanyProfile\CreateCompanyProfileData;
-use App\Dto\CompanyProfile\UpdateCompanyProfile;
+use App\Dto\UserProfile\IProfileData;
 use App\Exceptions\User\CreateUserException;
 use App\Exceptions\User\UpdateUserException;
 use App\Models\User;
 use App\Repositories\CompanyProfile\ICompanyProfileRepository;
 
-class CompanyProfileStrategy implements IUserProfileStrategy
+readonly class CompanyProfileStrategy implements IUserProfileStrategy
 {
-    public ICompanyProfileRepository $companyProfileRepository;
-    public function __construct()
+    public function __construct(
+        private ICompanyProfileRepository $companyProfileRepository
+    )
     {
-        $this->companyProfileRepository = app(ICompanyProfileRepository::class);
     }
 
     /**
      * 기업회원 프로필 생성
      * @param User $user
-     * @param array $data
+     * @param IProfileData $dto
      * @return void
      * @throws CreateUserException
      */
-    public function createProfile(User $user, array $data): void
+    public function createProfile(User $user, IProfileData $dto): void
     {
-        $createProfileDto = new CreateCompanyProfileData(
-            userId: $user->id,
-            companyId: $data['companyId'],
-            position: $data['position'] ?? null,
-            department: $data['department'] ?? null,
-            employeeNumber: $data['employeeNumber'] ?? null,
-            joinedAt: $data['joinedAt'] ?? null,
-            leftAt: $data['leftAt'] ?? null,
-        );
+        $createResult = $this->companyProfileRepository->create($dto->toArray());
 
-        $creatResult = $this->companyProfileRepository->create($createProfileDto->toArray());
-
-        if (!$creatResult) {
+        if (!$createResult) {
             throw new CreateUserException('기업 회원 프로필 생성 실패');
         }
     }
@@ -46,22 +35,13 @@ class CompanyProfileStrategy implements IUserProfileStrategy
     /**
      * 기업회원 프로필 수정
      * @param User $user
-     * @param array $data
+     * @param IProfileData $dto
      * @return void
      * @throws UpdateUserException
      */
-    public function updateProfile(User $user, array $data): void
+    public function updateProfile(User $user, IProfileData $dto): void
     {
-        $updateCompanyProfileDto = new UpdateCompanyProfile(
-            companyId: $data['companyId'],
-            position: $data['position'] ?? null,
-            department: $data['department'] ?? null,
-            employeeNumber: $data['employeeNumber'] ?? null,
-            joinedAt: $data['joinedAt'] ?? null,
-            leftAt: $data['leftAt'] ?? null,
-        );
-
-        $update = $this->companyProfileRepository->update($user->id, $updateCompanyProfileDto->toArray());
+        $update = $this->companyProfileRepository->update($user->id, $dto->toArray());
 
         if (!$update) {
             throw new UpdateUserException("기업 회원 프로필 업데이트 실패 user id: " . $user->id);

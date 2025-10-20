@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\User;
+namespace App\Services\User\UserProfileStrategy;
 
 use App\Dto\UserProfile\IProfileData;
 use App\Models\User;

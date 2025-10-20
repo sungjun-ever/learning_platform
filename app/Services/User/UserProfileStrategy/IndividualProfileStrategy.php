@@ -1,23 +1,23 @@
 <?php
 
-namespace App\Services\User;
+namespace App\Services\User\UserProfileStrategy;
 
 use App\Dto\UserProfile\IProfileData;
 use App\Exceptions\User\CreateUserException;
 use App\Exceptions\User\UpdateUserException;
 use App\Models\User;
-use App\Repositories\CompanyProfile\ICompanyProfileRepository;
+use App\Repositories\IndividualProfile\IIndividualProfileRepository;
 
-readonly class CompanyProfileStrategy implements IUserProfileStrategy
+readonly class IndividualProfileStrategy implements IUserProfileStrategy
 {
     public function __construct(
-        private ICompanyProfileRepository $companyProfileRepository
+        private IIndividualProfileRepository $individualProfileRepository,
     )
     {
     }
 
     /**
-     * 기업회원 프로필 생성
+     * 개인회원 프로필 생성
      * @param User $user
      * @param IProfileData $dto
      * @return void
@@ -25,15 +25,16 @@ readonly class CompanyProfileStrategy implements IUserProfileStrategy
      */
     public function createProfile(User $user, IProfileData $dto): void
     {
-        $createResult = $this->companyProfileRepository->create($dto->toArray());
+
+        $createResult = $this->individualProfileRepository->create($dto->toArray());
 
         if (!$createResult) {
-            throw new CreateUserException('기업 회원 프로필 생성 실패');
+            throw new CreateUserException('개인 회원 프로필 생성 실패');
         }
     }
 
     /**
-     * 기업회원 프로필 수정
+     * 개인회원 프로필 수정
      * @param User $user
      * @param IProfileData $dto
      * @return void
@@ -41,10 +42,10 @@ readonly class CompanyProfileStrategy implements IUserProfileStrategy
      */
     public function updateProfile(User $user, IProfileData $dto): void
     {
-        $update = $this->companyProfileRepository->update($user->id, $dto->toArray());
+        $update = $this->individualProfileRepository->update($user->id, $dto->toArray());
 
         if (!$update) {
-            throw new UpdateUserException("기업 회원 프로필 업데이트 실패 user id: " . $user->id);
+            throw new UpdateUserException("개인 회원 프로필 업데이트 실패 user id: " . $user->id);
         }
     }
 }

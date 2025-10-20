@@ -9,6 +9,8 @@ use App\Exceptions\User\CreateUserException;
 use App\Exceptions\User\UpdateUserException;
 use App\Models\User;
 use App\Repositories\User\IUserRepository;
+use App\Services\User\UserProfileStrategy\ProfileDataFactory;
+use App\Services\User\UserProfileStrategy\UserProfileStrategyFactory;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
@@ -118,6 +120,7 @@ readonly class UserService
                 throw new UpdateUserException("사용자 수정 실패 uuid: $uuid");
             }
 
+            // @TODO user_type이 변경되는 경우 로직 추가
             $profileStrategy = $this->profileStrategyFactory->make($user->user_type);
             $profileData = $this->profileDataFactory->makeUpdateData($user->user_type, $data);
 

@@ -13,9 +13,15 @@ class RoleRepository extends BaseRepository implements IRoleRepository
         parent::__construct(new Role());
     }
 
-    public function findByRoleName(): ?Role
+    public function create(array $data): ?Role
     {
-
+        return $this->writeConnection()->create($data);
     }
+
+    public function findByRoleCode(string $roleCode): ?Role
+    {
+        return $this->readConnection()->where('code', $roleCode)->first();
+    }
+
 
 }

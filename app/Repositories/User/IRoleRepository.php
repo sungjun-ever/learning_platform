@@ -6,5 +6,6 @@ use App\Models\Role;
 
 interface IRoleRepository
 {
-    public function findByRoleName(): ?Role;
+    public function create(array $data): ?Role;
+    public function findByRoleCode(string $roleCode): ?Role;
 }

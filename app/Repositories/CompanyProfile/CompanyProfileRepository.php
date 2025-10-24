@@ -8,20 +8,9 @@ use Illuminate\Database\Eloquent\Builder;
 
 class CompanyProfileRepository extends BaseRepository implements ICompanyProfileRepository
 {
-    public function __construct(
-        private readonly CompanyProfile $model,
-    )
+    public function __construct()
     {
-    }
-
-    protected function readConnection(): Builder
-    {
-        return $this->model->on('sqlite');
-    }
-
-    protected function writeConnection(): Builder
-    {
-        return $this->model->on('sqlite');
+        parent::__construct(new CompanyProfile());
     }
 
     public function create(array $data): ?CompanyProfile

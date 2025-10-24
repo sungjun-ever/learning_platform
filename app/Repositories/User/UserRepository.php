@@ -8,20 +8,9 @@ use App\Repositories\BaseRepository;
 class UserRepository extends BaseRepository implements IUserRepository
 {
 
-    public function __construct(
-        private readonly User $model,
-    )
+    public function __construct()
     {
-    }
-
-    protected function readConnection(): \Illuminate\Database\Eloquent\Builder
-    {
-        return $this->model->on('sqlite');
-    }
-
-    protected function writeConnection(): \Illuminate\Database\Eloquent\Builder
-    {
-        return $this->model->on('sqlite');
+        parent::__construct(new User());
     }
 
     public function create(array $data): ?User

@@ -27,7 +27,7 @@ class StoreUserRequest extends BaseUserRequest
             'name' => $this->defaultPostInputValidation('name'),
             'phone' => $this->defaultPostInputValidation('phone'),
             'birth' => $this->defaultPostInputValidation('birth'),
-            'role' => $this->defaultPostInputValidation('role'),
+            'roleCode' => $this->defaultPostInputValidation('roleCode'),
         ]);
 
         $this->preparedIndividualProfileData();
@@ -48,7 +48,7 @@ class StoreUserRequest extends BaseUserRequest
             'userType' => ['required', Rule::enum(UserType::class)],
             'phone' => ['nullable', 'string', 'max:20'],
             'birth' => ['nullable', 'date'],
-            'role' => ['required', Rule::enum(UserRoleType::class)]
+            'roleCode' => ['required', Rule::enum(UserRoleType::class)]
         ];
 
         if ($this->post('userType') === UserType::INDIVIDUAL->value) {

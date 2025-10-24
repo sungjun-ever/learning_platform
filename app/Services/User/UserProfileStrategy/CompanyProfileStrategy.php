@@ -4,6 +4,7 @@ namespace App\Services\User\UserProfileStrategy;
 
 use App\Dto\UserProfile\IProfileData;
 use App\Exceptions\User\CreateUserException;
+use App\Exceptions\User\DeleteUserException;
 use App\Exceptions\User\UpdateUserException;
 use App\Models\User;
 use App\Repositories\CompanyProfile\ICompanyProfileRepository;
@@ -45,6 +46,21 @@ readonly class CompanyProfileStrategy implements IUserProfileStrategy
 
         if (!$update) {
             throw new UpdateUserException("기업 회원 프로필 업데이트 실패 user id: " . $user->id);
+        }
+    }
+
+    /**
+     * 기업회원 프로필 삭제
+     * @param User $user
+     * @return void
+     * @throws DeleteUserException
+     */
+    public function deleteProfile(User $user): void
+    {
+        $delete = $this->companyProfileRepository->delete($user->id);
+
+        if (!$delete) {
+            throw new DeleteUserException("기업 회원 프로필 삭제 실패 user id: " . $user->id);
         }
     }
 }

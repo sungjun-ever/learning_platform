@@ -16,4 +16,7 @@ Route::prefix('users')->middleware('auth:sanctum')->group(function () {
 
     Route::put('/{uuid}', [UserController::class, 'update'])
         ->whereUuid('uuid');
+
+    Route::delete('/{uuid}', [UserController::class, 'destroy'])
+        ->whereUuid('uuid');
 });

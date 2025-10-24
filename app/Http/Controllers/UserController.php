@@ -68,4 +68,13 @@ class UserController extends Controller
             ],
         ]);
     }
+
+    public function destroy(string $uuid): JsonResponse
+    {
+        $this->userService->deleteUser($uuid);
+
+        return response()->json([
+            'status' => 'success',
+        ]);
+    }
 }

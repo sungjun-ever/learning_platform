@@ -38,4 +38,9 @@ class CompanyProfileRepository extends BaseRepository implements ICompanyProfile
     {
         return $this->writeConnection()->upsert($data, ['user_id']);
     }
+
+    public function delete(int $userId): bool
+    {
+        return $this->writeConnection()->where('user_id', $userId)->delete();
+    }
 }

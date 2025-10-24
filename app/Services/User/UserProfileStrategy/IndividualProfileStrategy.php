@@ -4,6 +4,7 @@ namespace App\Services\User\UserProfileStrategy;
 
 use App\Dto\UserProfile\IProfileData;
 use App\Exceptions\User\CreateUserException;
+use App\Exceptions\User\DeleteUserException;
 use App\Exceptions\User\UpdateUserException;
 use App\Models\User;
 use App\Repositories\IndividualProfile\IIndividualProfileRepository;
@@ -46,6 +47,21 @@ readonly class IndividualProfileStrategy implements IUserProfileStrategy
 
         if (!$update) {
             throw new UpdateUserException("개인 회원 프로필 업데이트 실패 user id: " . $user->id);
+        }
+    }
+
+    /**
+     * 개인회원 프로필 삭제
+     * @param User $user
+     * @return void
+     * @throws DeleteUserException
+     */
+    public function deleteProfile(User $user): void
+    {
+        $delete = $this->individualProfileRepository->delete($user->id);
+
+        if (!$delete) {
+            throw new DeleteUserException("개인 회원 프로필 삭제 실패 user id: " . $user->id);
         }
     }
 }

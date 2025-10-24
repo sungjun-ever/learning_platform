@@ -9,4 +9,6 @@ interface IUserProfileStrategy
 {
     public function createProfile(User $user, IProfileData $dto);
     public function updateProfile(User $user, IProfileData $dto);
+
+    public function deleteProfile(User $user);
 }

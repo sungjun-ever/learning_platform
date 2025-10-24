@@ -6,6 +6,7 @@ use App\Dto\User\CreateUserData;
 use App\Dto\User\UpdateUserData;
 use App\Enum\UserType;
 use App\Exceptions\User\CreateUserException;
+use App\Exceptions\User\DeleteUserException;
 use App\Exceptions\User\UpdateUserException;
 use App\Models\User;
 use App\Repositories\User\IUserRepository;
@@ -130,6 +131,32 @@ readonly class UserService
         });
 
         return $uuid;
+    }
+
+    /**
+     * 사용자 삭제(소프트)
+     * @param string $uuid
+     * @return void
+     * @throws \Throwable
+     */
+    public function deleteUser(string $uuid): void
+    {
+        // @TODO 현재 설정되어있는 회원타입이 아닌 다른 회원 타입 프로필이 존재하는 경우에는?
+        DB::transaction(function () use ($uuid) {
+           $user = $this->userRepository->findByUuid($uuid);
+
+           $deleted = $user->delete();
+
+           if (!$deleted) {
+               throw new DeleteUserException("사용자 삭제 실패 uuid: " . $uuid);
+           }
+
+           $profileStrategy = $this->profileStrategyFactory->make($user->user_type);
+
+           if ($profileStrategy) {
+               $profileStrategy->deleteProfile($user);
+           }
+        });
     }
 
 }

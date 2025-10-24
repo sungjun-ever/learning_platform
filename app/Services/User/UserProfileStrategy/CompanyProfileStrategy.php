@@ -41,7 +41,7 @@ readonly class CompanyProfileStrategy implements IUserProfileStrategy
      */
     public function updateProfile(User $user, IProfileData $dto): void
     {
-        $update = $this->companyProfileRepository->update($user->id, $dto->toArray());
+        $update = $this->companyProfileRepository->upsert($dto->toArray());
 
         if (!$update) {
             throw new UpdateUserException("기업 회원 프로필 업데이트 실패 user id: " . $user->id);

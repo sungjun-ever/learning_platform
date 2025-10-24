@@ -31,23 +31,4 @@ readonly class ProfileDataFactory
             default => null,
         };
     }
-
-    public function makeUpdateData(string $userType, array $data): ?IProfileData
-    {
-        return match ($userType) {
-            UserType::INDIVIDUAL->value => new UpdateIndividualProfileData(
-                job: $data['job'] ?? null,
-                career: $data['career'] ?? null,
-            ),
-            UserType::COMPANY->value => new UpdateCompanyProfileData(
-                companyId: $data['companyId'],
-                position: $data['position'] ?? null,
-                department: $data['department'] ?? null,
-                employeeNumber: $data['employeeNumber'] ?? null,
-                joinedAt: $data['joinedAt'] ?? null,
-                leftAt: $data['leftAt'] ?? null,
-            ),
-            default => null
-        };
-    }
 }

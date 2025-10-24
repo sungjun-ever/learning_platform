@@ -120,9 +120,8 @@ readonly class UserService
                 throw new UpdateUserException("사용자 수정 실패 uuid: $uuid");
             }
 
-            // @TODO user_type이 변경되는 경우 로직 추가
             $profileStrategy = $this->profileStrategyFactory->make($user->user_type);
-            $profileData = $this->profileDataFactory->makeUpdateData($user->user_type, $data);
+            $profileData = $this->profileDataFactory->makeCreateData($user->user_type, $user->id, $data);
 
             if ($profileStrategy && $profileData) {
                 $profileStrategy->updateProfile($user, $profileData);

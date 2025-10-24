@@ -42,7 +42,7 @@ readonly class IndividualProfileStrategy implements IUserProfileStrategy
      */
     public function updateProfile(User $user, IProfileData $dto): void
     {
-        $update = $this->individualProfileRepository->update($user->id, $dto->toArray());
+        $update = $this->individualProfileRepository->upsert($dto->toArray());
 
         if (!$update) {
             throw new UpdateUserException("개인 회원 프로필 업데이트 실패 user id: " . $user->id);

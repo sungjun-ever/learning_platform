@@ -33,4 +33,9 @@ class CompanyProfileRepository extends BaseRepository implements ICompanyProfile
     {
         return $this->writeConnection()->where('user_id', $userId)->update($data);
     }
+
+    public function upsert(array $data): bool
+    {
+        return $this->writeConnection()->upsert($data, ['user_id']);
+    }
 }

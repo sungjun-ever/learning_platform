@@ -8,8 +8,10 @@ use App\Repositories\IndividualProfile\IIndividualProfileRepository;
 use App\Repositories\IndividualProfile\IndividualProfileRepository;
 use App\Repositories\User\IRoleRepository;
 use App\Repositories\User\IUserRepository;
+use App\Repositories\User\IUserRoleRepository;
 use App\Repositories\User\RoleRepository;
 use App\Repositories\User\UserRepository;
+use App\Repositories\User\UserRoleRepository;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(IIndividualProfileRepository::class, IndividualProfileRepository::class);
         $this->app->bind(ICompanyProfileRepository::class, CompanyProfileRepository::class);
         $this->app->bind(IRoleRepository::class, RoleRepository::class);
+        $this->app->bind(IUserRoleRepository::class, UserRoleRepository::class );
     }
 
     /**

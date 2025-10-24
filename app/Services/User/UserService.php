@@ -9,7 +9,9 @@ use App\Exceptions\User\CreateUserException;
 use App\Exceptions\User\DeleteUserException;
 use App\Exceptions\User\UpdateUserException;
 use App\Models\User;
+use App\Repositories\User\IRoleRepository;
 use App\Repositories\User\IUserRepository;
+use App\Repositories\User\IUserRoleRepository;
 use App\Services\User\UserProfileStrategy\ProfileDataFactory;
 use App\Services\User\UserProfileStrategy\UserProfileStrategyFactory;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -22,6 +24,8 @@ readonly class UserService
         private IUserRepository $userRepository,
         private UserProfileStrategyFactory $profileStrategyFactory,
         private ProfileDataFactory $profileDataFactory,
+        private IRoleRepository $roleRepository,
+        private IUserRoleRepository $userRoleRepository,
     )
     {
     }
@@ -79,6 +83,20 @@ readonly class UserService
             if (!$user) {
                 throw new CreateUserException('사용자 생성에 실패했습니다.');
             }
+
+            $role = $this->roleRepository->findByRoleCode($data['roleCode']);
+
+            // 생성하려는 권한이 없으면 수강생 권한 부여
+            if (!$role) {
+                $role = $this->roleRepository->findByRoleCode('student');
+            }
+
+            // 유저 및 권한 매칭
+            $this->userRoleRepository->create([
+                'user_id' => $user->id,
+                'role_id' => $role->id
+            ]);
+
 
             $profileStrategy = $this->profileStrategyFactory->make($user->user_type);
             $profileData = $this->profileDataFactory->makeCreateData($user->user_type, $user->id, $data);

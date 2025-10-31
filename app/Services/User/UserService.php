@@ -139,6 +139,25 @@ readonly class UserService
                 throw new UpdateUserException("사용자 수정 실패 uuid: $uuid");
             }
 
+            $userRole = $this->userRoleRepository->getUserRoleByUserId($user->id);
+
+            // 권한 변경시 기존 권한 삭제 후 새 권한 부여
+            if ($userRole->role->code !== $data['roleCode']) {
+                $userRole->delete();
+
+                $role = $this->roleRepository->findByRoleCode($data['roleCode']);
+
+                // 생성하려는 권한이 없으면 수강생 권한 부여
+                if (!$role) {
+                    $role = $this->roleRepository->findByRoleCode('student');
+                }
+
+                $this->userRoleRepository->create([
+                    'user_id' => $user->id,
+                    'role_id' => $role->id,
+                ]);
+            }
+
             $profileStrategy = $this->profileStrategyFactory->make($user->user_type);
             $profileData = $this->profileDataFactory->makeCreateData($user->user_type, $user->id, $data);
 
@@ -177,6 +196,8 @@ readonly class UserService
            if ($userProfiles->individualProfile) {
                $this->profileStrategyFactory->make(UserType::INDIVIDUAL->value)->deleteProfile($user);
            }
+
+           $this->userRoleRepository->delete($user->id);
         });
     }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\User;
 
 
+use App\Enum\UserRoleType;
 use App\Enum\UserType;
 use Illuminate\Validation\Rule;
 
@@ -23,6 +24,7 @@ class UpdateUserRequest extends BaseUserRequest
             'name' => $this->defaultPostInputValidation($this->post('name')),
             'phone' => $this->defaultPostInputValidation('phone'),
             'birth' => $this->defaultPostInputValidation('birth'),
+            'roleCode' => $this->defaultPostInputValidation('roleCode'),
         ]);
 
         $this->preparedIndividualProfileData();
@@ -42,6 +44,7 @@ class UpdateUserRequest extends BaseUserRequest
             'userType' => ['required', Rule::enum(UserType::class)],
             'phone' => ['nullable', 'string', 'max:20'],
             'birth' => ['nullable', 'date'],
+            'roleCode' => ['required', Rule::enum(UserRoleType::class)]
         ];
 
         if ($this->post('userType') === UserType::INDIVIDUAL->value) {

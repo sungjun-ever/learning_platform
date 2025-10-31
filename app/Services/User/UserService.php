@@ -159,7 +159,6 @@ readonly class UserService
      */
     public function deleteUser(string $uuid): void
     {
-        // @TODO 현재 설정되어있는 회원타입이 아닌 다른 회원 타입 프로필이 존재하는 경우에는?
         DB::transaction(function () use ($uuid) {
            $user = $this->userRepository->findByUuid($uuid);
 
@@ -169,10 +168,14 @@ readonly class UserService
                throw new DeleteUserException("사용자 삭제 실패 uuid: " . $uuid);
            }
 
-           $profileStrategy = $this->profileStrategyFactory->make($user->user_type);
+           $userProfiles = $this->userRepository->findUserAllProfiles($uuid);
 
-           if ($profileStrategy) {
-               $profileStrategy->deleteProfile($user);
+           if ($userProfiles->companyProfiles) {
+               $this->profileStrategyFactory->make(UserType::COMPANY->value)->deleteProfile($user);
+           }
+
+           if ($userProfiles->individualProfile) {
+               $this->profileStrategyFactory->make(UserType::INDIVIDUAL->value)->deleteProfile($user);
            }
         });
     }

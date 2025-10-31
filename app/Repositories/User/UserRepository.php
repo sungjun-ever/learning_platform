@@ -4,6 +4,7 @@ namespace App\Repositories\User;
 
 use App\Models\User;
 use App\Repositories\BaseRepository;
+use Illuminate\Database\Eloquent\Collection;
 
 class UserRepository extends BaseRepository implements IUserRepository
 {
@@ -23,5 +24,13 @@ class UserRepository extends BaseRepository implements IUserRepository
         return $this->writeConnection()
             ->where('uuid', $uuid)
             ->first();
+    }
+
+    public function findUserAllProfiles(string $uuid): Collection
+    {
+        return $this->readConnection()
+            ->with(['individualProfile', 'companyProfile'])
+            ->where('uuid', $uuid)
+            ->get();
     }
 }
